@@ -1,6 +1,8 @@
 package com.example.popularmovies.network;
 
 import android.util.Log;
+
+import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.datamodel.SearchResult;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -14,7 +16,7 @@ public class Client {
 
     public static final String TAG = Client.class.getSimpleName();
 
-    public static final String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
+    public static final String API_BASE_URL = "http://api.themoviedb.org/3/Movie/";
     public static final String API_KEY = "99b2bc6e311bc17202dd2e9a640921ba";
 
     //STATIC
@@ -39,7 +41,8 @@ public class Client {
             public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
                 if (response.isSuccessful()) {
                     SearchResult searchResult = response.body();
-                    Log.i(TAG, "Respuesta asincrona correcta movie");
+                    Log.i(TAG, "Respuesta asincrona correcta Movie");
+                    DataModel.getInstance().setSearchResult(searchResult);
 
                 } else {
                     Log.i(TAG,response.message());

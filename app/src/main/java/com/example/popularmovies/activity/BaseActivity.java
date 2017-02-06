@@ -28,7 +28,7 @@ public class BaseActivity extends AppCompatActivity {
                                     Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 
-    protected void goToActivity(Class activityClass, int... flags) {
+    public void goToActivity(Class activityClass, int... flags) {
         Intent intent = new Intent(mContext, activityClass);
         for (int flag: flags) {
             intent.addFlags(flag);

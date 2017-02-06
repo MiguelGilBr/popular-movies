@@ -10,18 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.popularmovies.activity.BaseActivity;
+import com.example.popularmovies.activity.MovieDetailActivity;
 import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.popularmovies.R;
-import com.example.popularmovies.ui.CustomAdapter;
+import com.example.popularmovies.ui.MovieCoverAdapter;
 
-public class RecyclerViewFragment extends Fragment {
+public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.IMovieCover{
 
     private static final String TAG = RecyclerViewFragment.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
 
     protected RecyclerView mRecyclerView;
-    protected CustomAdapter mAdapter;
+    protected MovieCoverAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
+
+    public RecyclerViewFragment() {
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,8 @@ public class RecyclerViewFragment extends Fragment {
         }
         setRecyclerViewLayoutManager();
 
-        mAdapter = new CustomAdapter(DataModel.getInstance().getSearchResult(),getActivity());
-        // Set CustomAdapter as the adapter for RecyclerView.
+        mAdapter = new MovieCoverAdapter(DataModel.getInstance().getSearchResult(),getActivity(),this);
+        // Set MovieCoverAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)
 
@@ -68,5 +73,10 @@ public class RecyclerViewFragment extends Fragment {
         //Save currently selected layout manager.
         //savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onClick(int position) {
+        ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class);
     }
 }

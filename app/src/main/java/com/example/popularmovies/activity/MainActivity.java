@@ -12,6 +12,7 @@ import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
+import com.example.popularmovies.ui.MovieCoverAdapter;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

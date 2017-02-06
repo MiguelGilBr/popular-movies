@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.popularmovies.datamodel.SearchResult;
+import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
@@ -15,7 +16,6 @@ import com.squareup.picasso.Picasso;
 public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.ViewHolder> {
 
     private static final String TAG = MovieCoverAdapter.class.getSimpleName();
-    private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w342/";
 
     private Context mContext;
     private SearchResult mSearchResult ;
@@ -37,7 +37,7 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        Picasso.with(mContext).load(BASE_IMAGE_URL + mSearchResult.getResults().get(position).getPosterPath()).into(viewHolder.getImageView());
+        Picasso.with(mContext).load(Client.BASE_IMAGE_URL + mSearchResult.getResults().get(position).getPosterPath()).into(viewHolder.getImageView());
         viewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -6,13 +6,19 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.SearchResult;
+import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
+import com.squareup.picasso.Picasso;
 
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_NAME = "cheese_name";
+    int mMoviePosition;
+    SearchResult mSearchResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,20 +26,29 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.movie_detail);
 
         Intent intent = getIntent();
-        final String cheeseName = intent.getStringExtra(EXTRA_NAME);
+        mMoviePosition = intent.getIntExtra(MainActivity.POSITION_KEY,0);
+
+        mSearchResult = DataModel.getInstance().getSearchResult();
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(cheeseName);
+        collapsingToolbar.setTitle(mSearchResult.getResults().get(mMoviePosition).getTitle());
 
-        loadBackdrop();
+        loadData();
     }
 
-    private void loadBackdrop() {
-        final ImageView imageView = (ImageView) findViewById(R.id.backdrop);
-        //Glide.with(this).load(Cheeses.getRandomCheeseDrawable()).centerCrop().into(imageView);
+    private void loadData() {
+        //Backdrop
+        final ImageView backdropImageView = (ImageView) findViewById(R.id.backdrop);
+        Picasso.with(this).load(Client.BASE_IMAGE_URL + mSearchResult.getResults().get(mMoviePosition).getPosterPath()).into(backdropImageView);
+
+        //Movie Data
+        final TextView yearTextView = (TextView) findViewById(R.id.tv_year);
+        final TextView overviewTextView = (TextView) findViewById(R.id.tv_overview);
+        yearTextView.setText(mSearchResult.getResults().get(mMoviePosition).getReleaseDate().split("-")[0]);
+        overviewTextView.setText(mSearchResult.getResults().get(mMoviePosition).getOverview());
     }
 }

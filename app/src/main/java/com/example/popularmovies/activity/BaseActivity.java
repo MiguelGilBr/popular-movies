@@ -15,24 +15,14 @@ public class BaseActivity extends AppCompatActivity {
         mContext = this;
     }
 
-    protected void showBasicToast(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-    }
-
-    protected void restartActivity(Class activityClass) {
-        goToActivity(activityClass, Intent.FLAG_ACTIVITY_NEW_TASK);
-    }
-
-    protected void openActivity(Class activityClass) {
-        goToActivity(activityClass, Intent.FLAG_ACTIVITY_NEW_TASK,
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    }
-
-    public void goToActivity(Class activityClass, int... flags) {
+    public void goToActivity(Class activityClass, Bundle b, int... flags) {
         Intent intent = new Intent(mContext, activityClass);
+        intent.putExtras(b);
+
         for (int flag: flags) {
             intent.addFlags(flag);
         }
+
         startActivity(intent);
     }
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.popularmovies.activity.BaseActivity;
+import com.example.popularmovies.activity.MainActivity;
 import com.example.popularmovies.activity.MovieDetailActivity;
 import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.popularmovies.R;
@@ -19,6 +20,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
 
     private static final String TAG = RecyclerViewFragment.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
+
 
     protected RecyclerView mRecyclerView;
     protected MovieCoverAdapter mAdapter;
@@ -39,9 +41,6 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         rootView.setTag(TAG);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
 
-        // LinearLayoutManager is used here, this will layout the elements in a similar fashion
-        // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
-        // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
         if (savedInstanceState != null) {
             // Restore saved layout manager type.
@@ -49,9 +48,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         setRecyclerViewLayoutManager();
 
         mAdapter = new MovieCoverAdapter(DataModel.getInstance().getSearchResult(),getActivity(),this);
-        // Set MovieCoverAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
-        // END_INCLUDE(initializeRecyclerView)
 
         return rootView;
     }
@@ -77,6 +74,9 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
 
     @Override
     public void onClick(int position) {
-        ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(MainActivity.POSITION_KEY,position);
+
+        ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class, bundle);
     }
 }

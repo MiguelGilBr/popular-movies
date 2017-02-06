@@ -22,6 +22,7 @@ import retrofit2.Response;
 public class MainActivity extends BaseActivity implements Callback<SearchResult> {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String POSITION_KEY = "POSITION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

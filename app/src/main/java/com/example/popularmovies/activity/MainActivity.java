@@ -1,14 +1,26 @@
 package com.example.popularmovies.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.SearchResult;
+import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
 
-public class MainActivity extends BaseActivity {
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends BaseActivity implements Callback<SearchResult> {
+
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,8 +28,15 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Client.getPopularMovies(this);
+    }
 
-        Client.getPopularMovies();
+
+    private void updateFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        RecyclerViewFragment fragment = new RecyclerViewFragment();
+        transaction.replace(R.id.mainFragment, fragment);
+        transaction.commit();
     }
 
     //MENÚ
@@ -42,5 +61,24 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //CALLBACKS
+    @Override
+    public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
+        if (response.isSuccessful()) {
+            SearchResult searchResult = response.body();
+            Log.i(TAG, "Respuesta asincrona correcta Movie");
+            DataModel.getInstance().setSearchResult(searchResult);
+            updateFragment();
+        } else {
+            Log.i(TAG,response.message());
+            int statusCode = response.code();
+            ResponseBody errorBody = response.errorBody();
+        }
+    }
+    @Override
+    public void onFailure(Call<SearchResult> call, Throwable t) {
+        Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
     }
 }

@@ -8,17 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
+import com.example.popularmovies.activity.BaseActivity;
+import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.CustomAdapter;
 
 public class RecyclerViewFragment extends Fragment {
 
     private static final String TAG = RecyclerViewFragment.class.getSimpleName();
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
-    private static final int DATASET_COUNT = 60;
 
     protected RecyclerView mRecyclerView;
     protected CustomAdapter mAdapter;
@@ -27,7 +26,6 @@ public class RecyclerViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getDataset();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class RecyclerViewFragment extends Fragment {
         }
         setRecyclerViewLayoutManager();
 
-        mAdapter = new CustomAdapter(null);
+        mAdapter = new CustomAdapter(DataModel.getInstance().getSearchResult(),getActivity());
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)

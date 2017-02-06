@@ -16,7 +16,7 @@ public class Client {
 
     public static final String TAG = Client.class.getSimpleName();
 
-    public static final String API_BASE_URL = "http://api.themoviedb.org/3/Movie/";
+    public static final String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String API_KEY = "99b2bc6e311bc17202dd2e9a640921ba";
 
     //STATIC
@@ -33,29 +33,10 @@ public class Client {
     //CONSTRUCTOR
     private Client() {}
 
-    public static void getPopularMovies() {
+    public static void getPopularMovies(Callback<SearchResult> callback) {
         IMovies movies = Client.createService(IMovies.class);
         Call<SearchResult> callSearchResult = movies.getSearchResult("popular",API_KEY);
-        callSearchResult.enqueue(new Callback<SearchResult>() {
-            @Override
-            public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
-                if (response.isSuccessful()) {
-                    SearchResult searchResult = response.body();
-                    Log.i(TAG, "Respuesta asincrona correcta Movie");
-                    DataModel.getInstance().setSearchResult(searchResult);
-
-                } else {
-                    Log.i(TAG,response.message());
-                    int statusCode = response.code();
-                    ResponseBody errorBody = response.errorBody();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SearchResult> call, Throwable t) {
-                Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
-            }
-        });
+        callSearchResult.enqueue(callback);
     }
 }
 

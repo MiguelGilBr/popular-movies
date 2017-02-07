@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.popularmovies.datamodel.DataaModel;
+import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
@@ -28,7 +28,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mMoviePosition = intent.getIntExtra(MainActivity.POSITION_KEY,0);
 
-        mSearchResult = DataaModel.getInstance().getSearchResult();
+        mSearchResult = DataModel.getInstance().getSearchResult();
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -56,7 +56,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         final ImageView backdropImageView = (ImageView) findViewById(R.id.backdrop);
         Picasso.with(this).load(Client.BASE_IMAGE_URL + mSearchResult.getResults().get(mMoviePosition).getPosterPath()).into(backdropImageView);
 
-        //Moviee Data
+        //Movie Data
         final TextView yearTextView = (TextView) findViewById(R.id.tv_year);
         final TextView overviewTextView = (TextView) findViewById(R.id.tv_overview);
         yearTextView.setText(mSearchResult.getResults().get(mMoviePosition).getReleaseDate().split("-")[0]);

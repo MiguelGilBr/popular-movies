@@ -1,18 +1,18 @@
 package com.example.popularmovies.datamodel;
 
-public class DataaModel {
+public class DataModel {
 
-    private static DataaModel instance;
+    private static DataModel instance;
     private SearchResult searchResult;
 
-    public static DataaModel getInstance() {
+    public static DataModel getInstance() {
         if (instance == null) {
-            instance = new DataaModel();
+            instance = new DataModel();
         }
         return instance;
     }
 
-    private DataaModel() {
+    private DataModel() {
     }
 
     public void resetData() {

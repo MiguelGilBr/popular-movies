@@ -10,7 +10,7 @@ public class SearchResult {
     private Integer page;
     @SerializedName("results")
     @Expose
-    private List<Moviee> results = null;
+    private List<Movie> results = null;
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
@@ -25,10 +25,10 @@ public class SearchResult {
     public void setPage(Integer page) {
         this.page = page;
     }
-    public List<Moviee> getResults() {
+    public List<Movie> getResults() {
         return results;
     }
-    public void setResults(List<Moviee> results) {
+    public void setResults(List<Movie> results) {
         this.results = results;
     }
     public Integer getTotalResults() {

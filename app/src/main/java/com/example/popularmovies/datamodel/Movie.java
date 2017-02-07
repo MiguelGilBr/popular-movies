@@ -4,7 +4,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Moviee {
+public class Movie {
     @SerializedName("poster_path")
     @Expose
     private String posterPath;

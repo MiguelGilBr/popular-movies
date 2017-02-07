@@ -15,6 +15,10 @@ public class DataModel {
     private DataModel() {
     }
 
+    public void resetData() {
+        instance = null;
+    }
+
     //GETTERS & SETTERs
     public SearchResult getSearchResult() {
         return searchResult;

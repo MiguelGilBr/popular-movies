@@ -21,7 +21,7 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     private SearchResult mSearchResult ;
     private IMovieCover mIMovieCover;
 
-
+    //CONSTRUCTOR
     public MovieCoverAdapter(SearchResult searchResult, Context context, IMovieCover iMovieCover) {
         mSearchResult = searchResult;
         mContext = context;
@@ -49,6 +49,10 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     @Override
     public int getItemCount() {
         return mSearchResult.getResults().size();
+    }
+
+    public void setmSearchResult(SearchResult mSearchResult) {
+        this.mSearchResult = mSearchResult;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

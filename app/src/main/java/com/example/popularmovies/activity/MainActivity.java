@@ -1,6 +1,7 @@
 package com.example.popularmovies.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,7 +13,7 @@ import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
-import com.example.popularmovies.ui.MovieCoverAdapter;
+import com.example.popularmovies.util.InternetUtils;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -22,23 +23,57 @@ import retrofit2.Response;
 public class MainActivity extends BaseActivity implements Callback<SearchResult> {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String FRAGMENT_TAG = "RECYCLER_FRAGMENT";
     public static final String POSITION_KEY = "POSITION";
+
+    private RecyclerViewFragment recyclerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Client.getPopularMovies(this);
+        initUI();
+        getFirstData();
     }
 
+    private void initUI() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void getFirstData() {
+        if (InternetUtils.isInternetConnected(mContext)) {
+            if (DataModel.getInstance().getSearchResult() == null) {
+                showLoadingDialog();
+                Client.getPopularMovies(this);
+            } else {
+                updateFragment();
+            }
+        } else {
+            Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
+        }
+    }
+    private void refreshData() {
+        if (InternetUtils.isInternetConnected(mContext)) {
+            DataModel.getInstance().resetData();
+            showLoadingDialog();
+            Client.getTopMovies(this);
+
+        } else {
+            Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
+        }
+    }
 
     private void updateFragment() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        RecyclerViewFragment fragment = new RecyclerViewFragment();
-        transaction.replace(R.id.mainFragment, fragment);
-        transaction.commit();
+        RecyclerViewFragment recyclerFragment = (RecyclerViewFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (recyclerFragment == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            recyclerFragment = new RecyclerViewFragment();
+            transaction.replace(R.id.root_view, recyclerFragment,FRAGMENT_TAG);
+            transaction.commit();
+        } else {
+            recyclerFragment.refreshAdapter(DataModel.getInstance().getSearchResult());
+        }
     }
 
     //MENÚ
@@ -50,16 +85,11 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_retry) {
+            refreshData();
             return true;
-            //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-             //       .setAction("Action", null).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -68,6 +98,7 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
     //CALLBACKS
     @Override
     public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
+        hideLoadingDialog();
         if (response.isSuccessful()) {
             SearchResult searchResult = response.body();
             Log.i(TAG, "Respuesta asincrona correcta Movie");
@@ -81,6 +112,7 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
     }
     @Override
     public void onFailure(Call<SearchResult> call, Throwable t) {
+        hideLoadingDialog();
         Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
     }
 }

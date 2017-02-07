@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +17,8 @@ import com.squareup.picasso.Picasso;
 
 
 public class MovieDetailActivity extends AppCompatActivity {
-
-    int mMoviePosition;
-    SearchResult mSearchResult;
+    private int mMoviePosition;
+    private SearchResult mSearchResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,17 @@ public class MovieDetailActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(mSearchResult.getResults().get(mMoviePosition).getTitle());
 
         loadData();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void loadData() {

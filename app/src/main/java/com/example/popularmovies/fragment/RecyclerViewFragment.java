@@ -2,6 +2,7 @@ package com.example.popularmovies.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,21 +14,20 @@ import com.example.popularmovies.activity.BaseActivity;
 import com.example.popularmovies.activity.MainActivity;
 import com.example.popularmovies.activity.MovieDetailActivity;
 import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.MovieCoverAdapter;
 
 public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.IMovieCover{
 
     private static final String TAG = RecyclerViewFragment.class.getSimpleName();
-    private static final int SPAN_COUNT = 2;
 
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     protected RecyclerView mRecyclerView;
     protected MovieCoverAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
 
     public RecyclerViewFragment() {
-
     }
 
     @Override
@@ -37,9 +37,17 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
         rootView.setTag(TAG);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.srl_movie_list);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         if (savedInstanceState != null) {
@@ -54,21 +62,19 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
     }
 
     public void setRecyclerViewLayoutManager() {
-        int scrollPosition = 0;
-        // If a layout manager has already been set, get current scroll position.
-        //if (mRecyclerView.getLayoutManager() != null) {
-        //    scrollPosition = ((LinearLayoutManager) mRecyclerView.getLayoutManager())
-        //            .findFirstCompletelyVisibleItemPosition();
-        //}
-        mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
+        mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.recycler_span_count));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.scrollToPosition(scrollPosition);
+    }
+
+    public void refreshAdapter(SearchResult searchResult){
+        if (mAdapter != null) {
+            mAdapter.setmSearchResult(searchResult);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        //Save currently selected layout manager.
-        //savedInstanceState.putSerializable(KEY_LAYOUT_MANAGER, mCurrentLayoutManagerType);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -76,7 +82,6 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
     public void onClick(int position) {
         Bundle bundle = new Bundle();
         bundle.putInt(MainActivity.POSITION_KEY,position);
-
         ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class, bundle);
     }
 }

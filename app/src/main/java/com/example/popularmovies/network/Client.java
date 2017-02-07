@@ -18,7 +18,10 @@ public class Client {
 
     public static final String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w342/";
-    public static final String API_KEY = "99b2bc6e311bc17202dd2e9a640921ba";
+    public static final String API_KEY = "XXX";
+
+    public static final String ENDPOINT_POPULAR = "popular";
+    public static final String ENDPOINT_TOP = "top_rated";
 
     //STATIC
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -35,8 +38,15 @@ public class Client {
     private Client() {}
 
     public static void getPopularMovies(Callback<SearchResult> callback) {
+        getMovies(callback,ENDPOINT_POPULAR);
+    }
+    public static void getTopMovies(Callback<SearchResult> callback) {
+        getMovies(callback,ENDPOINT_TOP);
+    }
+
+    private static void getMovies(Callback<SearchResult> callback, String endPoint) {
         IMovies movies = Client.createService(IMovies.class);
-        Call<SearchResult> callSearchResult = movies.getSearchResult("popular",API_KEY);
+        Call<SearchResult> callSearchResult = movies.getSearchResult(endPoint,API_KEY);
         callSearchResult.enqueue(callback);
     }
 }

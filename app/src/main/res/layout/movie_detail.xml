@@ -69,14 +69,12 @@
                         android:id="@+id/tv_year"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Info"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
                     <TextView
                         android:id="@+id/tv_overview"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PRUEBA" />
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 
@@ -90,7 +88,7 @@
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
-        android:src="@android:drawable/btn_star"
+        android:src="@drawable/ic_star_border_white_24dp"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"/>
 

@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.DataaModel;
 import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
 
     private void getFirstData() {
         if (InternetUtils.isInternetConnected(mContext)) {
-            if (DataModel.getInstance().getSearchResult() == null) {
+            if (DataaModel.getInstance().getSearchResult() == null) {
                 showLoadingDialog();
                 Client.getPopularMovies(this);
             } else {
@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
     }
     private void refreshData() {
         if (InternetUtils.isInternetConnected(mContext)) {
-            DataModel.getInstance().resetData();
+            DataaModel.getInstance().resetData();
             showLoadingDialog();
             Client.getTopMovies(this);
 
@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
             transaction.replace(R.id.root_view, recyclerFragment,FRAGMENT_TAG);
             transaction.commit();
         } else {
-            recyclerFragment.refreshAdapter(DataModel.getInstance().getSearchResult());
+            recyclerFragment.refreshAdapter(DataaModel.getInstance().getSearchResult());
         }
     }
 
@@ -101,8 +101,8 @@ public class MainActivity extends BaseActivity implements Callback<SearchResult>
         hideLoadingDialog();
         if (response.isSuccessful()) {
             SearchResult searchResult = response.body();
-            Log.i(TAG, "Respuesta asincrona correcta Movie");
-            DataModel.getInstance().setSearchResult(searchResult);
+            Log.i(TAG, "Respuesta asincrona correcta Moviee");
+            DataaModel.getInstance().setSearchResult(searchResult);
             updateFragment();
         } else {
             Log.i(TAG,response.message());

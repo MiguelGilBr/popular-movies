@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.example.popularmovies.activity.BaseActivity;
 import com.example.popularmovies.activity.MainActivity;
 import com.example.popularmovies.activity.MovieDetailActivity;
-import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.DataaModel;
 import com.example.popularmovies.datamodel.SearchResult;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.MovieCoverAdapter;
@@ -55,7 +55,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         }
         setRecyclerViewLayoutManager();
 
-        mAdapter = new MovieCoverAdapter(DataModel.getInstance().getSearchResult(),getActivity(),this);
+        mAdapter = new MovieCoverAdapter(DataaModel.getInstance().getSearchResult(),getActivity(),this);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

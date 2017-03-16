@@ -1,10 +1,12 @@
-package com.example.popularmovies.datamodel;
+package com.example.popularmovies.datamodel.base;
 
-import java.util.List;
+import com.example.popularmovies.datamodel.Movie;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SearchResult {
+import java.util.List;
+
+public class SearchResultBase {
     @SerializedName("page")
     @Expose
     private Integer page;

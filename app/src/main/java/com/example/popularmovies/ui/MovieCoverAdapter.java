@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.popularmovies.datamodel.SearchResult;
+import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
 import com.squareup.picasso.Picasso;
@@ -18,12 +18,12 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     private static final String TAG = MovieCoverAdapter.class.getSimpleName();
 
     private Context mContext;
-    private SearchResult mSearchResult ;
+    private SearchResultMovie mSearchResultMovie;
     private IMovieCover mIMovieCover;
 
     //CONSTRUCTOR
-    public MovieCoverAdapter(SearchResult searchResult, Context context, IMovieCover iMovieCover) {
-        mSearchResult = searchResult;
+    public MovieCoverAdapter(SearchResultMovie searchResultMovie, Context context, IMovieCover iMovieCover) {
+        mSearchResultMovie = searchResultMovie;
         mContext = context;
         mIMovieCover = iMovieCover;
     }
@@ -37,7 +37,7 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        Picasso.with(mContext).load(Client.BASE_IMAGE_URL + mSearchResult.getResults().get(position).getPosterPath()).into(viewHolder.getImageView());
+        Picasso.with(mContext).load(Client.BASE_IMAGE_URL + mSearchResultMovie.getResults().get(position).getPosterPath()).into(viewHolder.getImageView());
         viewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,11 +48,11 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return mSearchResult.getResults().size();
+        return mSearchResultMovie.getResults().size();
     }
 
-    public void setmSearchResult(SearchResult mSearchResult) {
-        this.mSearchResult = mSearchResult;
+    public void setmSearchResultMovie(SearchResultMovie mSearchResultMovie) {
+        this.mSearchResultMovie = mSearchResultMovie;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

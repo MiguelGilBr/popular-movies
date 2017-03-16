@@ -14,7 +14,7 @@ import com.example.popularmovies.activity.BaseActivity;
 import com.example.popularmovies.activity.MainActivity;
 import com.example.popularmovies.activity.MovieDetailActivity;
 import com.example.popularmovies.datamodel.DataModel;
-import com.example.popularmovies.datamodel.SearchResult;
+import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.MovieCoverAdapter;
 
@@ -55,7 +55,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         }
         setRecyclerViewLayoutManager();
 
-        mAdapter = new MovieCoverAdapter(DataModel.getInstance().getSearchResult(),getActivity(),this);
+        mAdapter = new MovieCoverAdapter(DataModel.getInstance().getSearchResultMovie(),getActivity(),this);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
@@ -66,9 +66,9 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
-    public void refreshAdapter(SearchResult searchResult){
+    public void refreshAdapter(SearchResultMovie searchResultMovie){
         if (mAdapter != null) {
-            mAdapter.setmSearchResult(searchResult);
+            mAdapter.setmSearchResultMovie(searchResultMovie);
             mAdapter.notifyDataSetChanged();
         }
     }

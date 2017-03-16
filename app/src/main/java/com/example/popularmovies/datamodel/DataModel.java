@@ -1,9 +1,11 @@
 package com.example.popularmovies.datamodel;
 
+import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
+
 public class DataModel {
 
     private static DataModel instance;
-    private SearchResult searchResult;
+    private SearchResultMovie searchResultMovie;
 
     public static DataModel getInstance() {
         if (instance == null) {
@@ -20,10 +22,10 @@ public class DataModel {
     }
 
     //GETTERS & SETTERs
-    public SearchResult getSearchResult() {
-        return searchResult;
+    public SearchResultMovie getSearchResultMovie() {
+        return searchResultMovie;
     }
-    public void setSearchResult(SearchResult searchResult) {
-        this.searchResult = searchResult;
+    public void setSearchResultMovie(SearchResultMovie searchResultMovie) {
+        this.searchResultMovie = searchResultMovie;
     }
 }

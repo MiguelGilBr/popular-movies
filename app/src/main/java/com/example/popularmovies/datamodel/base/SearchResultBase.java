@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class SearchResultBase {
+public class SearchResultBase<Type> {
     @SerializedName("page")
     @Expose
     private Integer page;
     @SerializedName("results")
     @Expose
-    private List<Movie> results = null;
+    protected List<Type> results = null;
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
@@ -21,17 +21,17 @@ public class SearchResultBase {
     private Integer totalPages;
 
     //GETTERS & SETTERS
+    public List<Type> getResults() {
+        return results;
+    }
+    public void setResults(List<Type> results) {
+        this.results = results;
+    }
     public Integer getPage() {
         return page;
     }
     public void setPage(Integer page) {
         this.page = page;
-    }
-    public List<Movie> getResults() {
-        return results;
-    }
-    public void setResults(List<Movie> results) {
-        this.results = results;
     }
     public Integer getTotalResults() {
         return totalResults;

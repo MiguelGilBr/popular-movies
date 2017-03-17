@@ -6,4 +6,9 @@
     <!--ERROR STRINGS-->
     <string name="no_data">No Data Load</string>
     <string name="no_internet">No Internet Connection</string>
+
+    <!--MENU STRINGS-->
+    <string name="title_favourites">Favourites</string>
+    <string name="title_top">Top Movies</string>
+    <string name="title_popular">Popular Movies</string>
 </resources>

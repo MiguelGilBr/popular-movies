@@ -1,6 +1,8 @@
 package com.example.popularmovies.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -9,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.popularmovies.datamodel.DataModel;
-import com.example.popularmovies.datamodel.base.SearchResultBase;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
+import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
@@ -31,7 +33,6 @@ public class MainActivity extends BaseActivity {
     private RecyclerViewFragment recyclerFragment;
 
     private Callback<SearchResultMovie> movieCallback = (new Callback<SearchResultMovie>() {
-
         @Override
         public void onResponse(Call<SearchResultMovie> call, Response<SearchResultMovie> response) {
             hideLoadingDialog();
@@ -76,21 +77,63 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+    private Callback<SearchResultVideo> videoCallback = new Callback<SearchResultVideo>() {
+        @Override
+        public void onResponse(Call<SearchResultVideo> call, Response<SearchResultVideo> response) {
+            hideLoadingDialog();
+            if (response.isSuccessful()) {
+                Log.i(TAG, "Respuesta asincrona correcta Review");
+            } else {
+                Log.i(TAG,response.message());
+                //TODO: poner mensajico de clave invalida
+                int statusCode = response.code();
+                ResponseBody errorBody = response.errorBody();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<SearchResultVideo> call, Throwable t) {
+            hideLoadingDialog();
+            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
-        getFirstData();
+        getPopularData();
     }
 
     private void initUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_popular:
+                        getPopularData();
+                        return true;
+                    case R.id.navigation_top:
+                        getTopData();
+                        return true;
+                    case R.id.navigation_favourites:
+                        //TODO
+                        //Client.getMovieReviews(reviewCallback, "263115");
+                        //Client.getMovieVideos(videoCallback, "263115");
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
-    private void getFirstData() {
+    private void getPopularData() {
         if (InternetUtils.isInternetConnected(mContext)) {
+            DataModel.getInstance().resetData();
             if (DataModel.getInstance().getSearchResultMovie() == null) {
                 showLoadingDialog();
                 Client.getPopularMovies(movieCallback);
@@ -101,13 +144,11 @@ public class MainActivity extends BaseActivity {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
         }
     }
-    private void refreshData() {
+    private void getTopData() {
         if (InternetUtils.isInternetConnected(mContext)) {
             DataModel.getInstance().resetData();
             showLoadingDialog();
             Client.getTopMovies(movieCallback);
-            Client.getMovieReviews(reviewCallback, "263115");
-
         } else {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
         }
@@ -137,7 +178,7 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_retry) {
-            refreshData();
+            getTopData();
             return true;
         }
 

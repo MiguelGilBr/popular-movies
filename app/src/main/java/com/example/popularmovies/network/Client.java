@@ -2,6 +2,7 @@ package com.example.popularmovies.network;
 
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
+import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -36,21 +37,28 @@ public class Client {
     //CONSTRUCTOR
     private Client() {}
 
+    //GET MOVIES
     public static void getPopularMovies(Callback<SearchResultMovie> callback) {
         getMovies(callback,ENDPOINT_POPULAR);
     }
     public static void getTopMovies(Callback<SearchResultMovie> callback) {
         getMovies(callback,ENDPOINT_TOP);
     }
-
     private static void getMovies(Callback<SearchResultMovie> callback, String endPoint) {
         IMovies movies = Client.createService(IMovies.class);
         Call<SearchResultMovie> callSearchResult = movies.getMovies(endPoint,API_KEY);
         callSearchResult.enqueue(callback);
     }
+    //GET REVIEWS
     public static void getMovieReviews(Callback<SearchResultReview> callback, String movieId) {
         IMovies movies = Client.createService(IMovies.class);
-        Call<SearchResultReview> callSearchResult = movies.getMovieReviews(ENDPOINT_REVIEW,API_KEY);
+        Call<SearchResultReview> callSearchResult = movies.getMovieReviews(movieId + "/" + ENDPOINT_REVIEW,API_KEY);
+        callSearchResult.enqueue(callback);
+    }
+    //GET VIDEOS
+    public static void getMovieVideos(Callback<SearchResultVideo> callback, String movieId) {
+        IMovies movies = Client.createService(IMovies.class);
+        Call<SearchResultVideo> callSearchResult = movies.getMovieVideos(movieId + "/" + ENDPOINT_VIDEO,API_KEY);
         callSearchResult.enqueue(callback);
     }
 }

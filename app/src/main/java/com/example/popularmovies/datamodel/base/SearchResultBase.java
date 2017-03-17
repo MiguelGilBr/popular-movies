@@ -1,6 +1,5 @@
 package com.example.popularmovies.datamodel.base;
 
-import com.example.popularmovies.datamodel.Movie;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

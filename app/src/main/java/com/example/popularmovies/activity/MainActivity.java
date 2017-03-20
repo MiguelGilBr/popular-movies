@@ -48,7 +48,6 @@ public class MainActivity extends BaseActivity {
                 ResponseBody errorBody = response.errorBody();
             }
         }
-
         @Override
         public void onFailure(Call<SearchResultMovie> call, Throwable t) {
             hideLoadingDialog();

@@ -56,47 +56,7 @@ public class MainActivity extends BaseActivity {
         }
     });
 
-    private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {
-        @Override
-        public void onResponse(Call<SearchResultReview> call, Response<SearchResultReview> response) {
-            hideLoadingDialog();
-            if (response.isSuccessful()) {
-                Log.i(TAG, "Respuesta asincrona correcta Review");
-            } else {
-                Log.i(TAG,response.message());
-                //TODO: poner mensajico de clave invalida
-                int statusCode = response.code();
-                ResponseBody errorBody = response.errorBody();
-            }
-        }
 
-        @Override
-        public void onFailure(Call<SearchResultReview> call, Throwable t) {
-            hideLoadingDialog();
-            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
-        }
-    };
-
-    private Callback<SearchResultVideo> videoCallback = new Callback<SearchResultVideo>() {
-        @Override
-        public void onResponse(Call<SearchResultVideo> call, Response<SearchResultVideo> response) {
-            hideLoadingDialog();
-            if (response.isSuccessful()) {
-                Log.i(TAG, "Respuesta asincrona correcta Review");
-            } else {
-                Log.i(TAG,response.message());
-                //TODO: poner mensajico de clave invalida
-                int statusCode = response.code();
-                ResponseBody errorBody = response.errorBody();
-            }
-        }
-
-        @Override
-        public void onFailure(Call<SearchResultVideo> call, Throwable t) {
-            hideLoadingDialog();
-            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,8 +82,7 @@ public class MainActivity extends BaseActivity {
                         return true;
                     case R.id.navigation_favourites:
                         //TODO
-                        //Client.getMovieReviews(reviewCallback, "263115");
-                        //Client.getMovieVideos(videoCallback, "263115");
+
                         return true;
                 }
                 return false;
@@ -178,7 +137,6 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_retry) {
-            getTopData();
             return true;
         }
 

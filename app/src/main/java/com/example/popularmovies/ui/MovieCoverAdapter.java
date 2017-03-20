@@ -37,7 +37,9 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        Picasso.with(mContext).load(Client.BASE_IMAGE_URL + mSearchResultMovie.getResults().get(position).getPosterPath()).into(viewHolder.getImageView());
+        Picasso.with(mContext).load(Client.BASE_IMAGE_URL + mSearchResultMovie.getResults()
+                .get(position).getPosterPath())
+                .into(viewHolder.getImageView());
         viewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

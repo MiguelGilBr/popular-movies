@@ -2,6 +2,7 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_retry">Retry</string>
     <string name="loading">Loading…</string>
+    <string name="title_trailer">Trailers</string>
 
     <!--ERROR STRINGS-->
     <string name="no_data">No Data Load</string>

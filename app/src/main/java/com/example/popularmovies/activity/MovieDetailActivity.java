@@ -1,12 +1,16 @@
 package com.example.popularmovies.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.Review;
 import com.example.popularmovies.datamodel.Video;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
@@ -27,7 +32,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String TAG = MovieDetailActivity.class.getSimpleName();
     private int mMoviePosition;
@@ -36,13 +40,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     //UI
     private CollapsingToolbarLayout collapsingToolbar;
     private TextView tvTrailerTitle;
-    private LinearLayout llVideos;
+    private LinearLayout llVideos, llReviews;
 
 
     //NETWORK CALLBACKS
     private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {        @Override
         public void onResponse(Call<SearchResultReview> call, Response<SearchResultReview> response) {
             if (response.isSuccessful()) {
+                loadReviews(response.body());
                 Log.i(TAG, "Respuesta asincrona correcta Review");
             } else {
                 Log.i(TAG,response.message());
@@ -110,11 +115,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        llReviews = (LinearLayout) findViewById(R.id.ll_reviews);
         tvTrailerTitle = (TextView)  findViewById(R.id.title_trailer);
         llVideos = (LinearLayout) findViewById(R.id.ll_videos);
     }
 
-    //Movie Video
+    //Movie Videos
     private void loadVideos(SearchResultVideo videos) {
         if (videos.getResults() != null) {
             llVideos.setVisibility(View.VISIBLE);
@@ -126,7 +132,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         }
     }
-
     private void attachVideo(final Video video) {
         ImageView img = new ImageView(this);
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -151,12 +156,45 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
         llVideos.addView(img);
     }
-
     private void playTrailer(String videoID) {
         Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoID));
         startActivity(i);
     }
 
+    //Movie Review
+    private void loadReviews(SearchResultReview reviewResults) {
+        if (reviewResults.getResults() != null) {
+            llReviews.setVisibility(View.VISIBLE);
+            for (Review review : reviewResults.getResults()) {
+                attachReview(review);
+            }
+        }
+    }
+    private void attachReview(Review review) {
+        CardView card = new CardView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(15, 15, 15, 15);
+        card.setLayoutParams(params);
+        card.setContentPadding(15, 15, 15, 15);
+
+        TextView tvAuthor = new TextView(this);
+        tvAuthor.setLayoutParams(params);
+        tvAuthor.setText(review.getAuthor());
+        tvAuthor.setTypeface(null, Typeface.BOLD);
+        llReviews.addView(tvAuthor);
+
+        TextView tvContent = new TextView(this);
+        tvContent.setLayoutParams(params);
+        tvContent.setText(review.getContent());
+        card.addView(tvContent);
+
+        llReviews.addView(card);
+    }
+
+    //DATA
     private void loadData() {
         //Backdrop
         final ImageView backdropImageView = (ImageView) findViewById(R.id.backdrop);

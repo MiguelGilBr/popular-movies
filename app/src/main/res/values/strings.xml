@@ -12,4 +12,5 @@
     <string name="title_favourites">Favourites</string>
     <string name="title_top">Top Movies</string>
     <string name="title_popular">Popular Movies</string>
+    <string name="title_reviews">Reviews</string>
 </resources>

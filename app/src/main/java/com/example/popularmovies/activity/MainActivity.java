@@ -138,8 +138,6 @@ public class MainActivity extends BaseActivity {
         if (id == R.id.action_retry) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 }

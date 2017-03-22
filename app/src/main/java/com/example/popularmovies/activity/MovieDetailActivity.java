@@ -17,9 +17,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.popularmovies.application.PopularMoviesApplication;
 import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.datamodel.Review;
 import com.example.popularmovies.datamodel.Video;
+import com.example.popularmovies.datamodel.VideoDao;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
 import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
@@ -125,8 +127,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (videos.getResults() != null) {
             llVideos.setVisibility(View.VISIBLE);
             tvTrailerTitle.setVisibility(View.VISIBLE);
+            VideoDao noteDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getVideoDao();
             for (Video video : videos.getResults()) {
                 if (video.getSite() != null && video.getSite().equalsIgnoreCase("YouTube") && video.getType() != null && video.getType().equalsIgnoreCase("Trailer")) {
+                    noteDao.insertOrReplace(video);
                     attachVideo(video);
                 }
             }

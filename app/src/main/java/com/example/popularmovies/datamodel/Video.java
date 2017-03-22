@@ -3,10 +3,18 @@ package com.example.popularmovies.datamodel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Index;
+
+@Entity
 public class Video {
+
     @SerializedName("id")
     @Expose
-    private String id;
+    @Index(unique = true)
+    private String videoId;
     @SerializedName("iso_639_1")
     @Expose
     private String iso6391;
@@ -29,12 +37,28 @@ public class Video {
     @Expose
     private String type;
 
-    //GETTERS & SETTERs
-    public String getId() {
-        return id;
+    public Video() {
     }
-    public void setId(String id) {
-        this.id = id;
+
+    @Generated(hash = 1511249278)
+    public Video(String videoId, String iso6391, String iso31661, String key,
+            String name, String site, Integer size, String type) {
+        this.videoId = videoId;
+        this.iso6391 = iso6391;
+        this.iso31661 = iso31661;
+        this.key = key;
+        this.name = name;
+        this.site = site;
+        this.size = size;
+        this.type = type;
+    }
+
+    //GETTERS & SETTERs
+    public String getVideoId() {
+        return videoId;
+    }
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
     public String getIso6391() {
         return iso6391;

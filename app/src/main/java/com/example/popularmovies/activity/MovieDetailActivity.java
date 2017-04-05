@@ -96,8 +96,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         loadData();
 
-        Client.getMovieReviews(reviewCallback, mSearchResultMovie.getResults().get(mMoviePosition).getId().toString());
-        Client.getMovieVideos(videoCallback,  mSearchResultMovie.getResults().get(mMoviePosition).getId().toString());
+        Client.getMovieReviews(reviewCallback, String.valueOf(mSearchResultMovie.getResults().get(mMoviePosition).getId()));
+        Client.getMovieVideos(videoCallback,  String.valueOf(mSearchResultMovie.getResults().get(mMoviePosition).getId()));
     }
 
     @Override

@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.popularmovies.application.PopularMoviesApplication;
 import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.Movie;
+import com.example.popularmovies.datamodel.MovieDao;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
 import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
@@ -39,6 +42,9 @@ public class MainActivity extends BaseActivity {
             if (response.isSuccessful()) {
                 SearchResultMovie searchResultMovie = response.body();
                 Log.i(TAG, "Respuesta asincrona correcta Movie");
+                MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
+                for (Movie movie : searchResultMovie.getResults())
+                    movieDao.insertOrReplace(movie);
                 DataModel.getInstance().setSearchResultMovie(searchResultMovie);
                 updateFragment();
             } else {

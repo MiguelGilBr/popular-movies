@@ -1,16 +1,15 @@
 package com.example.popularmovies.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +18,8 @@ import android.widget.TextView;
 
 import com.example.popularmovies.application.PopularMoviesApplication;
 import com.example.popularmovies.datamodel.DataModel;
+import com.example.popularmovies.datamodel.Movie;
+import com.example.popularmovies.datamodel.MovieDao;
 import com.example.popularmovies.datamodel.Review;
 import com.example.popularmovies.datamodel.Video;
 import com.example.popularmovies.datamodel.VideoDao;
@@ -36,14 +37,18 @@ import retrofit2.Response;
 
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String TAG = MovieDetailActivity.class.getSimpleName();
+
     private int mMoviePosition;
     private SearchResultMovie mSearchResultMovie;
-
+    private MovieDao movieDao;
+    private Movie movie;
+    private Boolean isFavourite = false;
+    
     //UI
+    private FloatingActionButton favouriteStar;
     private CollapsingToolbarLayout collapsingToolbar;
     private TextView tvTrailerTitle;
     private LinearLayout llVideos, llReviews;
-
 
     //NETWORK CALLBACKS
     private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {        @Override
@@ -89,15 +94,19 @@ public class MovieDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mMoviePosition = intent.getIntExtra(MainActivity.POSITION_KEY,0);
         mSearchResultMovie = DataModel.getInstance().getSearchResultMovie();
-
+        movie = mSearchResultMovie.getResults().get(mMoviePosition);
+        movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
+        if (movieDao.load(movie.getId()) != null) {
+            isFavourite = true;
+        };
         initUI();
 
         collapsingToolbar.setTitle(mSearchResultMovie.getResults().get(mMoviePosition).getTitle());
 
         loadData();
 
-        Client.getMovieReviews(reviewCallback, String.valueOf(mSearchResultMovie.getResults().get(mMoviePosition).getId()));
-        Client.getMovieVideos(videoCallback,  String.valueOf(mSearchResultMovie.getResults().get(mMoviePosition).getId()));
+        Client.getMovieReviews(reviewCallback, String.valueOf(movie.getId()));
+        Client.getMovieVideos(videoCallback,  String.valueOf(movie.getId()));
     }
 
     @Override
@@ -120,6 +129,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         llReviews = (LinearLayout) findViewById(R.id.ll_reviews);
         tvTrailerTitle = (TextView)  findViewById(R.id.title_trailer);
         llVideos = (LinearLayout) findViewById(R.id.ll_videos);
+        favouriteStar = (FloatingActionButton) findViewById(R.id.favourite_star);
+
+        updateFavouriteIcon();
     }
 
     //Movie Videos
@@ -211,5 +223,31 @@ public class MovieDetailActivity extends AppCompatActivity {
         final TextView overviewTextView = (TextView) findViewById(R.id.tv_overview);
         yearTextView.setText(mSearchResultMovie.getResults().get(mMoviePosition).getReleaseDate().split("-")[0]);
         overviewTextView.setText(mSearchResultMovie.getResults().get(mMoviePosition).getOverview());
+
+        //Favourite Star
+        favouriteStar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleFavourite();
+            }
+        });
+    }
+
+    //FAVOURITES
+    private void toggleFavourite(){
+        isFavourite=!isFavourite;
+        if (isFavourite) {
+            movieDao.insertOrReplace(movie);
+        } else {
+            movieDao.delete(movie);
+        }
+        updateFavouriteIcon();
+    }
+    private void updateFavouriteIcon() {
+        if (isFavourite) {
+            favouriteStar.setImageDrawable(getResources().getDrawable(R.drawable.ic_star_white_24dp));
+        } else {
+            favouriteStar.setImageDrawable(getResources().getDrawable(R.drawable.ic_star_border_white_24dp));
+        }
     }
 }

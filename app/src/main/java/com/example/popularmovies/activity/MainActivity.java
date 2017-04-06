@@ -42,9 +42,6 @@ public class MainActivity extends BaseActivity {
             if (response.isSuccessful()) {
                 SearchResultMovie searchResultMovie = response.body();
                 Log.i(TAG, "Respuesta asincrona correcta Movie");
-                MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
-                for (Movie movie : searchResultMovie.getResults())
-                    movieDao.insertOrReplace(movie);
                 DataModel.getInstance().setSearchResultMovie(searchResultMovie);
                 updateFragment();
             } else {

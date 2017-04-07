@@ -15,12 +15,12 @@ import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.datamodel.Movie;
 import com.example.popularmovies.datamodel.MovieDao;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
-import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
-import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.util.InternetUtils;
+
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity {
     public static final String POSITION_KEY = "POSITION";
 
     private RecyclerViewFragment recyclerFragment;
-
     private Callback<SearchResultMovie> movieCallback = (new Callback<SearchResultMovie>() {
         @Override
         public void onResponse(Call<SearchResultMovie> call, Response<SearchResultMovie> response) {
@@ -43,7 +42,7 @@ public class MainActivity extends BaseActivity {
                 SearchResultMovie searchResultMovie = response.body();
                 Log.i(TAG, "Respuesta asincrona correcta Movie");
                 DataModel.getInstance().setSearchResultMovie(searchResultMovie);
-                updateFragment();
+                updateFragment(DataModel.getInstance().getSearchResultMovie());
             } else {
                 Log.i(TAG,response.message());
                 //TODO: poner mensajico de clave invalida
@@ -57,8 +56,6 @@ public class MainActivity extends BaseActivity {
             Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
         }
     });
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +80,7 @@ public class MainActivity extends BaseActivity {
                         getTopData();
                         return true;
                     case R.id.navigation_favourites:
-                        //TODO
-
+                        getFavouriteData();
                         return true;
                 }
                 return false;
@@ -99,7 +95,7 @@ public class MainActivity extends BaseActivity {
                 showLoadingDialog();
                 Client.getPopularMovies(movieCallback);
             } else {
-                updateFragment();
+                updateFragment(DataModel.getInstance().getSearchResultMovie());
             }
         } else {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
@@ -114,8 +110,14 @@ public class MainActivity extends BaseActivity {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
         }
     }
+    private void getFavouriteData(){
+        MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
+        List<Movie> list = movieDao.queryBuilder().list();
+        updateFragment(new SearchResultMovie(movieDao.queryBuilder().list()));
+    }
 
-    private void updateFragment() {
+    private void updateFragment(SearchResultMovie searchResultMovie) {
+        //TODO MODE DDBB
         RecyclerViewFragment recyclerFragment = (RecyclerViewFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (recyclerFragment == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -123,7 +125,7 @@ public class MainActivity extends BaseActivity {
             transaction.replace(R.id.root_view, recyclerFragment,FRAGMENT_TAG);
             transaction.commit();
         } else {
-            recyclerFragment.refreshAdapter(DataModel.getInstance().getSearchResultMovie());
+            recyclerFragment.refreshAdapter(searchResultMovie);
         }
     }
 

@@ -5,10 +5,16 @@ import com.example.popularmovies.datamodel.base.SearchResultBase;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class SearchResultReview extends SearchResultBase<Review> {
     @SerializedName("id")
     @Expose
     private Integer id;
+
+    public SearchResultReview(List<Review> results) {
+        super(results);
+    }
 
     //GETTERS & SETTERs
     public Integer getId() {

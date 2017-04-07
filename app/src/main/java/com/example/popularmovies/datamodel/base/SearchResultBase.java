@@ -1,5 +1,6 @@
 package com.example.popularmovies.datamodel.base;
 
+import com.example.popularmovies.datamodel.Movie;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +19,11 @@ public class SearchResultBase<Type> {
     @SerializedName("total_pages")
     @Expose
     private Integer totalPages;
+
+    //CONSTRUCTOR
+    public SearchResultBase(List<Type> results) {
+        this.results = results;
+    }
 
     //GETTERS & SETTERS
     public List<Type> getResults() {

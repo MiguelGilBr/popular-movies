@@ -24,7 +24,6 @@ import com.example.popularmovies.datamodel.Review;
 import com.example.popularmovies.datamodel.ReviewDao;
 import com.example.popularmovies.datamodel.Video;
 import com.example.popularmovies.datamodel.VideoDao;
-import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.datamodel.searchResult.SearchResultReview;
 import com.example.popularmovies.datamodel.searchResult.SearchResultVideo;
 import com.example.popularmovies.network.Client;
@@ -44,8 +43,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private VideoDao videoDao;
 
     private Movie movie;
-    private Boolean isFavourite = false;
-    
+    private Boolean isFavourite = true;
+
     //UI
     private FloatingActionButton favouriteStar;
     private CollapsingToolbarLayout collapsingToolbar;
@@ -87,8 +86,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         tvTrailerTitle = (TextView)  findViewById(R.id.title_trailer);
         llVideos = (LinearLayout) findViewById(R.id.ll_videos);
         favouriteStar = (FloatingActionButton) findViewById(R.id.favourite_star);
-        updateFavouriteIcon();
 
+        updateFavouriteIcon();
         collapsingToolbar.setTitle(movie.getTitle());
     }
 
@@ -108,10 +107,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (videos.getResults() != null) {
             llVideos.setVisibility(View.VISIBLE);
             tvTrailerTitle.setVisibility(View.VISIBLE);
-            VideoDao noteDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getVideoDao();
+            videoDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getVideoDao();
             for (Video video : videos.getResults()) {
                 video.setMovieId(movie.getId());
-                noteDao.insertOrReplace(video);
+                videoDao.insertOrReplace(video);
                 if (video.getSite() != null && video.getSite().equalsIgnoreCase("YouTube") && video.getType() != null && video.getType().equalsIgnoreCase("Trailer")) {
                     attachVideo(video);
                 }

@@ -80,6 +80,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
 
     @Override
     public void onClick(int position) {
+        //TODO ADD MODE DDBB
         Bundle bundle = new Bundle();
         bundle.putInt(MainActivity.POSITION_KEY,position);
         ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class, bundle);

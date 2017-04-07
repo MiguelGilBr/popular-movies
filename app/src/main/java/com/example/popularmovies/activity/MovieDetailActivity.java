@@ -21,6 +21,7 @@ import com.example.popularmovies.datamodel.DataModel;
 import com.example.popularmovies.datamodel.Movie;
 import com.example.popularmovies.datamodel.MovieDao;
 import com.example.popularmovies.datamodel.Review;
+import com.example.popularmovies.datamodel.ReviewDao;
 import com.example.popularmovies.datamodel.Video;
 import com.example.popularmovies.datamodel.VideoDao;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
@@ -38,9 +39,10 @@ import retrofit2.Response;
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String TAG = MovieDetailActivity.class.getSimpleName();
 
-    private int mMoviePosition;
-    private SearchResultMovie mSearchResultMovie;
     private MovieDao movieDao;
+    private ReviewDao reviewDao;
+    private VideoDao videoDao;
+
     private Movie movie;
     private Boolean isFavourite = false;
     
@@ -50,63 +52,44 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView tvTrailerTitle;
     private LinearLayout llVideos, llReviews;
 
-    //NETWORK CALLBACKS
-    private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {        @Override
-        public void onResponse(Call<SearchResultReview> call, Response<SearchResultReview> response) {
-            if (response.isSuccessful()) {
-                loadReviews(response.body());
-                Log.i(TAG, "Respuesta asincrona correcta Review");
-            } else {
-                Log.i(TAG,response.message());
-                //TODO: poner mensajico de clave invalida
-                int statusCode = response.code();
-                ResponseBody errorBody = response.errorBody();
-            }
-        }
-
-        @Override
-        public void onFailure(Call<SearchResultReview> call, Throwable t) {
-            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
-        }
-    };
-    private Callback<SearchResultVideo> videoCallback = new Callback<SearchResultVideo>() {
-        @Override
-        public void onResponse(Call<SearchResultVideo> call, Response<SearchResultVideo> response) {
-            if (response.isSuccessful()) {
-                Log.i(TAG, "Respuesta asincrona correcta Review");
-                loadVideos(response.body());
-            } else {
-                Log.i(TAG,response.message());
-            }
-        }
-
-        @Override
-        public void onFailure(Call<SearchResultVideo> call, Throwable t) {
-            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
-        }
-    };
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_detail);
 
-        Intent intent = getIntent();
-        mMoviePosition = intent.getIntExtra(MainActivity.POSITION_KEY,0);
-        mSearchResultMovie = DataModel.getInstance().getSearchResultMovie();
-        movie = mSearchResultMovie.getResults().get(mMoviePosition);
+        initDAOs();
+        initMovieData();
+        initUI();
+        loadData();
+        loadExtraData();
+    }
+
+    private void initDAOs() {
         movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
+        reviewDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getReviewDao();
+        videoDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getVideoDao();
+    }
+    private void initMovieData() {
+        Intent intent = getIntent();
+        movie = DataModel.getInstance().getSearchResultMovie().getResults().get(intent.getIntExtra(MainActivity.POSITION_KEY,0));
         if (movieDao.load(movie.getId()) != null) {
             isFavourite = true;
-        };
-        initUI();
+        }
+        ;
+    }
+    private void initUI() {
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        collapsingToolbar.setTitle(mSearchResultMovie.getResults().get(mMoviePosition).getTitle());
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        llReviews = (LinearLayout) findViewById(R.id.ll_reviews);
+        tvTrailerTitle = (TextView)  findViewById(R.id.title_trailer);
+        llVideos = (LinearLayout) findViewById(R.id.ll_videos);
+        favouriteStar = (FloatingActionButton) findViewById(R.id.favourite_star);
+        updateFavouriteIcon();
 
-        loadData();
-
-        Client.getMovieReviews(reviewCallback, String.valueOf(movie.getId()));
-        Client.getMovieVideos(videoCallback,  String.valueOf(movie.getId()));
+        collapsingToolbar.setTitle(movie.getTitle());
     }
 
     @Override
@@ -120,20 +103,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void initUI() {
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        llReviews = (LinearLayout) findViewById(R.id.ll_reviews);
-        tvTrailerTitle = (TextView)  findViewById(R.id.title_trailer);
-        llVideos = (LinearLayout) findViewById(R.id.ll_videos);
-        favouriteStar = (FloatingActionButton) findViewById(R.id.favourite_star);
-
-        updateFavouriteIcon();
-    }
-
     //Movie Videos
     private void loadVideos(SearchResultVideo videos) {
         if (videos.getResults() != null) {
@@ -141,8 +110,9 @@ public class MovieDetailActivity extends AppCompatActivity {
             tvTrailerTitle.setVisibility(View.VISIBLE);
             VideoDao noteDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getVideoDao();
             for (Video video : videos.getResults()) {
+                video.setMovieId(movie.getId());
+                noteDao.insertOrReplace(video);
                 if (video.getSite() != null && video.getSite().equalsIgnoreCase("YouTube") && video.getType() != null && video.getType().equalsIgnoreCase("Trailer")) {
-                    noteDao.insertOrReplace(video);
                     attachVideo(video);
                 }
             }
@@ -183,6 +153,8 @@ public class MovieDetailActivity extends AppCompatActivity {
             llReviews.setVisibility(View.VISIBLE);
             for (Review review : reviewResults.getResults()) {
                 attachReview(review);
+                review.setMovieId(movie.getId());
+                reviewDao.insertOrReplace(review);
             }
         }
     }
@@ -214,15 +186,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     private void loadData() {
         //Backdrop
         final ImageView backdropImageView = (ImageView) findViewById(R.id.backdrop);
-        Picasso.with(this).load(Client.BASE_IMAGE_URL + mSearchResultMovie.getResults()
-                .get(mMoviePosition).getPosterPath())
+        Picasso.with(this).load(Client.BASE_IMAGE_URL + movie.getPosterPath())
                 .into(backdropImageView);
 
         //Movie Data
         final TextView yearTextView = (TextView) findViewById(R.id.tv_year);
         final TextView overviewTextView = (TextView) findViewById(R.id.tv_overview);
-        yearTextView.setText(mSearchResultMovie.getResults().get(mMoviePosition).getReleaseDate().split("-")[0]);
-        overviewTextView.setText(mSearchResultMovie.getResults().get(mMoviePosition).getOverview());
+        yearTextView.setText(movie.getReleaseDate().split("-")[0]);
+        overviewTextView.setText(movie.getOverview());
 
         //Favourite Star
         favouriteStar.setOnClickListener(new View.OnClickListener() {
@@ -232,6 +203,44 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
     }
+    private void loadExtraData() {
+        Client.getMovieReviews(reviewCallback, String.valueOf(movie.getId()));
+        Client.getMovieVideos(videoCallback,  String.valueOf(movie.getId()));
+    }
+    private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {        @Override
+    public void onResponse(Call<SearchResultReview> call, Response<SearchResultReview> response) {
+        if (response.isSuccessful()) {
+            loadReviews(response.body());
+            Log.i(TAG, "Respuesta asincrona correcta Review");
+        } else {
+            Log.i(TAG,response.message());
+            //TODO: poner mensajico de clave invalida
+            int statusCode = response.code();
+            ResponseBody errorBody = response.errorBody();
+        }
+    }
+
+        @Override
+        public void onFailure(Call<SearchResultReview> call, Throwable t) {
+            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
+        }
+    };
+    private Callback<SearchResultVideo> videoCallback = new Callback<SearchResultVideo>() {
+        @Override
+        public void onResponse(Call<SearchResultVideo> call, Response<SearchResultVideo> response) {
+            if (response.isSuccessful()) {
+                Log.i(TAG, "Respuesta asincrona correcta Review");
+                loadVideos(response.body());
+            } else {
+                Log.i(TAG,response.message());
+            }
+        }
+
+        @Override
+        public void onFailure(Call<SearchResultVideo> call, Throwable t) {
+            Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
+        }
+    };
 
     //FAVOURITES
     private void toggleFavourite(){

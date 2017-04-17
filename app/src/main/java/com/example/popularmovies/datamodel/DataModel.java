@@ -5,7 +5,8 @@ import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 public class DataModel {
 
     private static DataModel instance;
-    private SearchResultMovie searchResultMovie;
+    private SearchResultMovie searchResultPopularMovie;
+    private SearchResultMovie searchResultTopMovie;
 
     public static DataModel getInstance() {
         if (instance == null) {
@@ -22,10 +23,16 @@ public class DataModel {
     }
 
     //GETTERS & SETTERs
-    public SearchResultMovie getSearchResultMovie() {
-        return searchResultMovie;
+    public SearchResultMovie getSearchResultPopularMovie() {
+        return searchResultPopularMovie;
     }
-    public void setSearchResultMovie(SearchResultMovie searchResultMovie) {
-        this.searchResultMovie = searchResultMovie;
+    public void setSearchResultPopularMovie(SearchResultMovie searchResultPopularMovie) {
+        this.searchResultPopularMovie = searchResultPopularMovie;
+    }
+    public SearchResultMovie getSearchResultTopMovie() {
+        return searchResultTopMovie;
+    }
+    public void setSearchResultTopMovie(SearchResultMovie searchResultTopMovie) {
+        this.searchResultTopMovie = searchResultTopMovie;
     }
 }

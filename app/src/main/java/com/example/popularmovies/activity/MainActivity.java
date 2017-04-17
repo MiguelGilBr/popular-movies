@@ -33,6 +33,14 @@ public class MainActivity extends BaseActivity {
     public static final String FRAGMENT_TAG = "RECYCLER_FRAGMENT";
     public static final String POSITION_KEY = "POSITION";
 
+    public static final String TYPE_KEY = "TYPE";
+    public enum DetailType  {
+        POPULAR,
+        TOP,
+        FAVOURITE
+    };
+    private DetailType detailType = DetailType.POPULAR;
+
     private RecyclerViewFragment recyclerFragment;
     private Callback<SearchResultMovie> movieCallback = (new Callback<SearchResultMovie>() {
         @Override
@@ -41,8 +49,7 @@ public class MainActivity extends BaseActivity {
             if (response.isSuccessful()) {
                 SearchResultMovie searchResultMovie = response.body();
                 Log.i(TAG, "Respuesta asincrona correcta Movie");
-                DataModel.getInstance().setSearchResultMovie(searchResultMovie);
-                updateFragment(DataModel.getInstance().getSearchResultMovie());
+                setData(searchResultMovie);
             } else {
                 Log.i(TAG,response.message());
                 //TODO: poner mensajico de clave invalida
@@ -56,15 +63,53 @@ public class MainActivity extends BaseActivity {
             Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());
         }
     });
+    private void setData(SearchResultMovie searchResultMovie) {
+        switch (detailType) {
+            case POPULAR:
+                DataModel.getInstance().setSearchResultPopularMovie(searchResultMovie);
+                break;
+            case TOP:
+                DataModel.getInstance().setSearchResultTopMovie(searchResultMovie);
+                break;
+            default:
+                break;
+        }
+        updateFragment(searchResultMovie);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getInt(TYPE_KEY,-1)> -1) {
+                detailType = DetailType.values()[savedInstanceState.getInt(TYPE_KEY,-1)];
+            }
+        }
+
         initUI();
-        getPopularData();
+        initData();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TYPE_KEY, detailType.ordinal());
     }
 
+    private void initData() {
+        switch (detailType) {
+            case POPULAR:
+                getPopularData();
+                break;
+            case TOP:
+                getTopData();
+                break;
+            case FAVOURITE:
+                getFavouriteData();
+                break;
+        }
+    }
     private void initUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,42 +134,48 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getPopularData() {
+        detailType = DetailType.POPULAR;
         if (InternetUtils.isInternetConnected(mContext)) {
-            DataModel.getInstance().resetData();
-            if (DataModel.getInstance().getSearchResultMovie() == null) {
+            if (DataModel.getInstance().getSearchResultPopularMovie() == null) {
                 showLoadingDialog();
                 Client.getPopularMovies(movieCallback);
             } else {
-                updateFragment(DataModel.getInstance().getSearchResultMovie());
+                updateFragment(DataModel.getInstance().getSearchResultPopularMovie());
             }
         } else {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
         }
     }
     private void getTopData() {
+        detailType = DetailType.TOP;
         if (InternetUtils.isInternetConnected(mContext)) {
-            DataModel.getInstance().resetData();
-            showLoadingDialog();
-            Client.getTopMovies(movieCallback);
+            if (DataModel.getInstance().getSearchResultTopMovie() == null) {
+                showLoadingDialog();
+                Client.getTopMovies(movieCallback);
+            } else {
+                updateFragment(DataModel.getInstance().getSearchResultTopMovie());
+            }
         } else {
             Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
         }
     }
     private void getFavouriteData(){
+        detailType = DetailType.FAVOURITE;
         MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
         List<Movie> list = movieDao.queryBuilder().list();
         updateFragment(new SearchResultMovie(movieDao.queryBuilder().list()));
     }
 
     private void updateFragment(SearchResultMovie searchResultMovie) {
-        //TODO MODE DDBB
-        RecyclerViewFragment recyclerFragment = (RecyclerViewFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        recyclerFragment = (RecyclerViewFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (recyclerFragment == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            recyclerFragment = new RecyclerViewFragment();
+            recyclerFragment = RecyclerViewFragment.newInstance();
             transaction.replace(R.id.root_view, recyclerFragment,FRAGMENT_TAG);
             transaction.commit();
+            recyclerFragment.setCacheSearchResultMovie(searchResultMovie);
         } else {
+            recyclerFragment.setCacheSearchResultMovie(searchResultMovie);
             recyclerFragment.refreshAdapter(searchResultMovie);
         }
     }
@@ -132,17 +183,15 @@ public class MainActivity extends BaseActivity {
     //MENÚ
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_retry) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-}
+    }

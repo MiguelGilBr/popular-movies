@@ -4,6 +4,7 @@ import com.example.popularmovies.datamodel.Movie;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultBase<Type> {
@@ -12,7 +13,7 @@ public class SearchResultBase<Type> {
     private Integer page;
     @SerializedName("results")
     @Expose
-    protected List<Type> results = null;
+    protected List<Type> results = new ArrayList<Type>();
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
@@ -21,6 +22,7 @@ public class SearchResultBase<Type> {
     private Integer totalPages;
 
     //CONSTRUCTOR
+    public SearchResultBase() {}
     public SearchResultBase(List<Type> results) {
         this.results = results;
     }

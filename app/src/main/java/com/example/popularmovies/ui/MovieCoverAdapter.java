@@ -18,12 +18,11 @@ public class MovieCoverAdapter extends RecyclerView.Adapter<MovieCoverAdapter.Vi
     private static final String TAG = MovieCoverAdapter.class.getSimpleName();
 
     private Context mContext;
-    private SearchResultMovie mSearchResultMovie;
+    private SearchResultMovie mSearchResultMovie =  new SearchResultMovie();
     private IMovieCover mIMovieCover;
 
     //CONSTRUCTOR
-    public MovieCoverAdapter(SearchResultMovie searchResultMovie, Context context, IMovieCover iMovieCover) {
-        mSearchResultMovie = searchResultMovie;
+    public MovieCoverAdapter(Context context, IMovieCover iMovieCover) {
         mContext = context;
         mIMovieCover = iMovieCover;
     }

@@ -18,7 +18,7 @@ import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.MovieCoverAdapter;
 
-public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.IMovieCover{
+public class RecyclerViewFragment extends Fragment {
 
     private static final String TAG = RecyclerViewFragment.class.getSimpleName();
 
@@ -58,7 +58,7 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
         }
         setRecyclerViewLayoutManager();
 
-        mAdapter = new MovieCoverAdapter(getActivity(),this);
+        mAdapter = new MovieCoverAdapter(getActivity(),(MainActivity) getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
@@ -86,17 +86,5 @@ public class RecyclerViewFragment extends Fragment implements MovieCoverAdapter.
             mAdapter.setmSearchResultMovie(searchResultMovie);
             mAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onClick(int position) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(MainActivity.POSITION_KEY,position);
-        ((BaseActivity)getActivity()).goToActivity(MovieDetailActivity.class, bundle);
     }
 }

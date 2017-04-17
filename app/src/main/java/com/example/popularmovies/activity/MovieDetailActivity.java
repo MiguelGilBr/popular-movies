@@ -37,13 +37,14 @@ import retrofit2.Response;
 
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String TAG = MovieDetailActivity.class.getSimpleName();
+    private MainActivity.DetailType detailType;
 
     private MovieDao movieDao;
     private ReviewDao reviewDao;
     private VideoDao videoDao;
 
     private Movie movie;
-    private Boolean isFavourite = true;
+    private Boolean isFavourite = false;
 
     //UI
     private FloatingActionButton favouriteStar;
@@ -70,11 +71,21 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
     private void initMovieData() {
         Intent intent = getIntent();
-        movie = DataModel.getInstance().getSearchResultMovie().getResults().get(intent.getIntExtra(MainActivity.POSITION_KEY,0));
+        detailType = MainActivity.DetailType.values()[intent.getIntExtra(MainActivity.TYPE_KEY,-1)];
+        switch (detailType) {
+            case POPULAR:
+                movie = DataModel.getInstance().getSearchResultPopularMovie().getResults().get(intent.getIntExtra(MainActivity.POSITION_KEY,0));
+                break;
+            case TOP:
+                movie = DataModel.getInstance().getSearchResultTopMovie().getResults().get(intent.getIntExtra(MainActivity.POSITION_KEY,0));
+                break;
+            case FAVOURITE:
+                movie = movieDao.queryBuilder().list().get(intent.getIntExtra(MainActivity.POSITION_KEY,0));
+                break;
+        }
         if (movieDao.load(movie.getId()) != null) {
             isFavourite = true;
         }
-        ;
     }
     private void initUI() {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

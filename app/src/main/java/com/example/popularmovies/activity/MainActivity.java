@@ -12,28 +12,26 @@ import android.view.MenuItem;
 
 import com.example.popularmovies.application.PopularMoviesApplication;
 import com.example.popularmovies.datamodel.DataModel;
-import com.example.popularmovies.datamodel.Movie;
 import com.example.popularmovies.datamodel.MovieDao;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
+import com.example.popularmovies.ui.MovieCoverAdapter;
 import com.example.popularmovies.util.InternetUtils;
-
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMovieCover{
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String FRAGMENT_TAG = "RECYCLER_FRAGMENT";
     public static final String POSITION_KEY = "POSITION";
-
     public static final String TYPE_KEY = "TYPE";
+
     public enum DetailType  {
         POPULAR,
         TOP,
@@ -82,21 +80,26 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.getInt(TYPE_KEY,-1)> -1) {
-                detailType = DetailType.values()[savedInstanceState.getInt(TYPE_KEY,-1)];
-            }
-        }
-
+        initDataBundle(savedInstanceState);
         initUI();
         initData();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (detailType.equals(DetailType.FAVOURITE)) {
+            getFavouriteData();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(TYPE_KEY, detailType.ordinal());
     }
 
+    //INIT
     private void initData() {
         switch (detailType) {
             case POPULAR:
@@ -132,7 +135,15 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+    private void initDataBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getInt(TYPE_KEY,-1)> -1) {
+                detailType = DetailType.values()[savedInstanceState.getInt(TYPE_KEY,-1)];
+            }
+        }
+    }
 
+    //GET DATA
     private void getPopularData() {
         detailType = DetailType.POPULAR;
         if (InternetUtils.isInternetConnected(mContext)) {
@@ -162,10 +173,10 @@ public class MainActivity extends BaseActivity {
     private void getFavouriteData(){
         detailType = DetailType.FAVOURITE;
         MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
-        List<Movie> list = movieDao.queryBuilder().list();
         updateFragment(new SearchResultMovie(movieDao.queryBuilder().list()));
     }
 
+    //FRAGMENT
     private void updateFragment(SearchResultMovie searchResultMovie) {
         recyclerFragment = (RecyclerViewFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (recyclerFragment == null) {
@@ -179,7 +190,13 @@ public class MainActivity extends BaseActivity {
             recyclerFragment.refreshAdapter(searchResultMovie);
         }
     }
-
+    @Override
+    public void onClick(int position) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(POSITION_KEY,position);
+        bundle.putInt(TYPE_KEY, detailType.ordinal());
+        goToActivity(MovieDetailActivity.class, bundle);
+    }
     //MENÚ
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.popularmovies.application.PopularMoviesApplication;
 import com.example.popularmovies.datamodel.DataModel;
@@ -147,28 +148,26 @@ public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMov
     private void getPopularData() {
         detailType = DetailType.POPULAR;
         if (InternetUtils.isInternetConnected(mContext)) {
-            if (DataModel.getInstance().getSearchResultPopularMovie() == null) {
+            if (DataModel.getInstance().getSearchResultPopularMovie().getTotalResults() == null) {
                 showLoadingDialog();
                 Client.getPopularMovies(movieCallback);
-            } else {
-                updateFragment(DataModel.getInstance().getSearchResultPopularMovie());
             }
         } else {
-            Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
+        updateFragment(DataModel.getInstance().getSearchResultPopularMovie());
     }
     private void getTopData() {
         detailType = DetailType.TOP;
         if (InternetUtils.isInternetConnected(mContext)) {
-            if (DataModel.getInstance().getSearchResultTopMovie() == null) {
+            if (DataModel.getInstance().getSearchResultTopMovie().getTotalResults() == null) {
                 showLoadingDialog();
                 Client.getTopMovies(movieCallback);
-            } else {
-                updateFragment(DataModel.getInstance().getSearchResultTopMovie());
             }
         } else {
-            Snackbar.make(findViewById(R.id.root_view), R.string.no_internet, Snackbar.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
+        updateFragment(DataModel.getInstance().getSearchResultTopMovie());
     }
     private void getFavouriteData(){
         detailType = DetailType.FAVOURITE;

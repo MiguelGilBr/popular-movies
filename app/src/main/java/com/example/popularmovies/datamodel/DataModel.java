@@ -5,8 +5,8 @@ import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 public class DataModel {
 
     private static DataModel instance;
-    private SearchResultMovie searchResultPopularMovie;
-    private SearchResultMovie searchResultTopMovie;
+    private SearchResultMovie searchResultPopularMovie = new SearchResultMovie();
+    private SearchResultMovie searchResultTopMovie =  new SearchResultMovie();
 
     public static DataModel getInstance() {
         if (instance == null) {
@@ -16,10 +16,6 @@ public class DataModel {
     }
 
     private DataModel() {
-    }
-
-    public void resetData() {
-        instance = null;
     }
 
     //GETTERS & SETTERs

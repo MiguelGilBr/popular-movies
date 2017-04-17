@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.DaoException;
@@ -15,8 +14,9 @@ import org.greenrobot.greendao.annotation.NotNull;
 public class Review {
     @SerializedName("id")
     @Expose
+    private String id;
     @Id
-    private long id;
+    private long reviewId;
     @SerializedName("author")
     @Expose
     private String author;
@@ -26,7 +26,6 @@ public class Review {
     @SerializedName("url")
     @Expose
     private String url;
-
     private long movieId;
     @ToOne(joinProperty = "movieId")
     private Movie movie;
@@ -37,10 +36,11 @@ public class Review {
     @Generated(hash = 1047363205)
     private transient ReviewDao myDao;
 
-    @Generated(hash = 1092264397)
-    public Review(long id, String author, String content, String url,
-            long movieId) {
+    @Generated(hash = 1754555093)
+    public Review(String id, long reviewId, String author, String content,
+            String url, long movieId) {
         this.id = id;
+        this.reviewId = reviewId;
         this.author = author;
         this.content = content;
         this.url = url;
@@ -53,11 +53,18 @@ public class Review {
     private transient Long movie__resolvedKey;
 
     //GETTERS & SETTERs
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+    public long getReviewId() {
+        return reviewId;
+    }
+
+    public void setReviewId(long reviewId) {
+        this.reviewId = reviewId;
     }
     public String getAuthor() {
         return author;
@@ -153,4 +160,4 @@ public class Review {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getReviewDao() : null;
     }
-}
+    }

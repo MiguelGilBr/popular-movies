@@ -13,10 +13,11 @@ import org.greenrobot.greendao.annotation.NotNull;
 
 @Entity
 public class Video {
+    @Id
+    private long videoId;
     @SerializedName("id")
     @Expose
-    @Id
-    private long id;
+    private String id;
     @SerializedName("iso_639_1")
     @Expose
     private String iso6391;
@@ -49,9 +50,11 @@ public class Video {
     @Generated(hash = 2004496110)
     private transient VideoDao myDao;
 
-    @Generated(hash = 1770469773)
-    public Video(long id, String iso6391, String iso31661, String key, String name,
-            String site, Integer size, String type, long movieId) {
+    @Generated(hash = 1355059884)
+    public Video(long videoId, String id, String iso6391, String iso31661,
+            String key, String name, String site, Integer size, String type,
+            long movieId) {
+        this.videoId = videoId;
         this.id = id;
         this.iso6391 = iso6391;
         this.iso31661 = iso31661;
@@ -69,11 +72,17 @@ public class Video {
     private transient Long movie__resolvedKey;
 
     //GETTERS & SETTERs
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+    public long getVideoId() {
+        return videoId;
+    }
+    public void setVideoId(long videoId) {
+        this.videoId = videoId;
     }
     public String getIso6391() {
         return iso6391;

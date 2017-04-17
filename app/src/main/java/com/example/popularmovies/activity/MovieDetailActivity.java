@@ -217,7 +217,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         Client.getMovieReviews(reviewCallback, String.valueOf(movie.getId()));
         Client.getMovieVideos(videoCallback,  String.valueOf(movie.getId()));
     }
-    private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {        @Override
+    private Callback<SearchResultReview> reviewCallback = new Callback<SearchResultReview>() {
+        @Override
     public void onResponse(Call<SearchResultReview> call, Response<SearchResultReview> response) {
         if (response.isSuccessful()) {
             loadReviews(response.body());
@@ -227,9 +228,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             //TODO: poner mensajico de clave invalida
             int statusCode = response.code();
             ResponseBody errorBody = response.errorBody();
-        }
-    }
-
+        }    }
         @Override
         public void onFailure(Call<SearchResultReview> call, Throwable t) {
             Log.i(TAG, "Respuesta asincrona fallo journey: " + t.getMessage());

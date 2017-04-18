@@ -16,7 +16,7 @@ public class Client {
 
     public static final String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w342/";
-    public static final String API_KEY = "99b2bc6e311bc17202dd2e9a640921ba";
+    public static final String API_KEY = "XXX";
     public static final String YOUTUBE_PIC_URL = "https://img.youtube.com/vi/";
 
     public static final String ENDPOINT_POPULAR = "popular";

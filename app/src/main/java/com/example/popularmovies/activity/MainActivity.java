@@ -3,11 +3,9 @@ package com.example.popularmovies.activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -83,7 +81,7 @@ public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMov
 
         initDataBundle(savedInstanceState);
         initUI();
-        initData();
+        refreshData();
     }
 
     @Override
@@ -101,7 +99,7 @@ public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMov
     }
 
     //INIT
-    private void initData() {
+    public void refreshData() {
         switch (detailType) {
             case POPULAR:
                 getPopularData();
@@ -196,18 +194,4 @@ public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMov
         bundle.putInt(TYPE_KEY, detailType.ordinal());
         goToActivity(MovieDetailActivity.class, bundle);
     }
-    //MENÚ
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_retry) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    }
+}

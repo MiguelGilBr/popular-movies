@@ -11,9 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.popularmovies.activity.BaseActivity;
 import com.example.popularmovies.activity.MainActivity;
-import com.example.popularmovies.activity.MovieDetailActivity;
 import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.popularmovies.R;
 import com.example.popularmovies.ui.MovieCoverAdapter;
@@ -38,7 +36,6 @@ public class RecyclerViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
@@ -48,22 +45,18 @@ public class RecyclerViewFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                ((MainActivity) getActivity()).refreshData();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
         mLayoutManager = new LinearLayoutManager(getActivity());
-        if (savedInstanceState != null) {
-            // Restore saved layout manager type.
-        }
         setRecyclerViewLayoutManager();
-
         mAdapter = new MovieCoverAdapter(getActivity(),(MainActivity) getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,11 +69,9 @@ public class RecyclerViewFragment extends Fragment {
         mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.recycler_span_count));
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
-
     public void setCacheSearchResultMovie(SearchResultMovie cacheSearchResultMovie) {
         this.cacheSearchResultMovie = cacheSearchResultMovie;
     }
-
     public void refreshAdapter(SearchResultMovie searchResultMovie){
         if (mAdapter != null) {
             mAdapter.setmSearchResultMovie(searchResultMovie);

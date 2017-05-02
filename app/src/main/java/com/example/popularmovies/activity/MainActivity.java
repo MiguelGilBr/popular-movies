@@ -1,5 +1,8 @@
 package com.example.popularmovies.activity;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,6 +19,7 @@ import com.example.popularmovies.datamodel.searchResult.SearchResultMovie;
 import com.example.popularmovies.fragment.RecyclerViewFragment;
 import com.example.popularmovies.network.Client;
 import com.example.popularmovies.popularmovies.R;
+import com.example.popularmovies.provider.MoviesContentProvider;
 import com.example.popularmovies.ui.MovieCoverAdapter;
 import com.example.popularmovies.util.InternetUtils;
 
@@ -169,8 +173,23 @@ public class MainActivity extends BaseActivity implements MovieCoverAdapter.IMov
     }
     private void getFavouriteData(){
         detailType = DetailType.FAVOURITE;
-        MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
-        updateFragment(new SearchResultMovie(movieDao.queryBuilder().list()));
+        //MovieDao movieDao = ((PopularMoviesApplication) getApplication()).getDaoSession().getMovieDao();
+        //updateFragment(new SearchResultMovie(movieDao.queryBuilder().list()));
+
+        updateFragment(new SearchResultMovie(loadFavouritesFromContentProvider()));
+    }
+    private Cursor loadFavouritesFromContentProvider() {
+        String[] projection = new String[] {
+                MovieDao.Properties.Id.columnName,
+                MovieDao.Properties.Title.columnName,
+                MovieDao.Properties.Overview.columnName,
+                MovieDao.Properties.PosterPath.columnName };
+
+        return getContentResolver().query(MoviesContentProvider.MOVIE_URI,
+                projection, //Columnas a devolver
+                null,       //Condición de la query
+                null,       //Argumentos variables de la query
+                null);
     }
 
     //FRAGMENT

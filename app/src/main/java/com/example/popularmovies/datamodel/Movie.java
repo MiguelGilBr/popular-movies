@@ -1,5 +1,7 @@
 package com.example.popularmovies.datamodel;
 
+import android.database.Cursor;
+
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -89,6 +91,17 @@ public class Movie {
     }
     @Generated(hash = 1263461133)
     public Movie() {
+    }
+    public Movie(Cursor cursor) {
+        int colId = cursor.getColumnIndex(MovieDao.Properties.Id.columnName);
+        int colTitle = cursor.getColumnIndex(MovieDao.Properties.Title.columnName);
+        int colOverview = cursor.getColumnIndex(MovieDao.Properties.Overview.columnName);
+        int colPosterpath = cursor.getColumnIndex(MovieDao.Properties.PosterPath.columnName);
+
+        id = cursor.getLong(colId);
+        title = cursor.getString(colTitle);
+        overview = cursor.getString(colOverview);
+        posterPath= cursor.getString(colPosterpath);
     }
 
     //GETTERS & SETTERS

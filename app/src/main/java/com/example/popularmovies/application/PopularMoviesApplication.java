@@ -1,8 +1,11 @@
 package com.example.popularmovies.application;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+
 import com.example.popularmovies.datamodel.DaoMaster;
 import com.example.popularmovies.datamodel.DaoSession;
+import com.example.popularmovies.provider.MoviesContentProvider;
 
 public class PopularMoviesApplication extends BaseApplication{
 
@@ -23,6 +26,7 @@ public class PopularMoviesApplication extends BaseApplication{
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
+        MoviesContentProvider.daoSession = daoSession;
     }
     public DaoSession getDaoSession() {
         return daoSession;
